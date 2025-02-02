@@ -1,52 +1,51 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QTextEdit
 from PyQt6.QtCore import Qt, QPointF
 from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient
-from mainPageStyleSheet import styleSheet
-from addPage import AddWindow
 import sys
 
 
-class Window(QWidget):
-    def __init__(self):
+class AddWindow(QWidget):
+    def __init__(self, mainWindow):
         super().__init__()
+        self.mainWindow = mainWindow
         self.UI()
 
 
-    def UI(self):
+    def UI(self): 
         self.setFixedSize(400, 450)
         self.setWindowTitle("GUI")
 
-        self.decorations1 = QColor(156, 187, 252)
-        self.decorations2 = QColor(156, 187, 252, 150)
+        grid = QGridLayout()
 
-        horizontalLayout = QHBoxLayout()
-        verticalLayout = QVBoxLayout()
-        verticalLayout.setContentsMargins(0, 0, 0, 0)
-        horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        returnButton = QPushButton("Return")
+        returnButton.clicked.connect(self.openMainWindow)
 
-        greeting = QLabel("<h1> Welcome! </h1>");
-        greeting.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        greeting.setStyleSheet("background: transparent;")
-        verticalLayout.addWidget(greeting)
+        info = QLabel("<h1> You can add new words here </h1>") 
+        info.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        info.setStyleSheet("font-size: 12px;")
 
-        startButton = QPushButton("Start") 
-        startButton.setObjectName("StartButton")
+        wordLabel = QLabel("Word")
+        self.wordInput = QLineEdit(self)
+        self.wordInput.setPlaceholderText("Type something...")
 
-        addButton = QPushButton("Add")
-        addButton.setObjectName("AddButton")
-        addButton.clicked.connect(self.openAddWindow)
-
-        horizontalLayout.addWidget(startButton)
-        horizontalLayout.addWidget(addButton)
-        horizontalLayout.setContentsMargins(0, 0, 0, 100)
-
-        verticalLayout.addLayout(horizontalLayout)
-        self.setLayout(verticalLayout)
+        definitionLabel = QLabel("Definition") 
+        self.definitionInput = QTextEdit(self)
+        self.definitionInput.setPlaceholderText("Type something...")
 
 
-    def openAddWindow(self):
-        self.addWindow = AddWindow(self)
-        self.addWindow.show()
+        grid.addWidget(returnButton, 0, 0, 1, 1)
+        grid.addWidget(info, 1, 0, 1, 2)
+        grid.addWidget(wordLabel, 2, 0)
+        grid.addWidget(self.wordInput, 3, 0, 1, 2) 
+        grid.addWidget(definitionLabel, 4, 0, 1, 0)
+        grid.addWidget(self.definitionInput, 5, 0, 2, 4)
+
+        self.setLayout(grid)
+
+    
+    def openMainWindow(self):
+        if self.mainWindow:
+            self.mainWindow.show()
         self.close()
 
     
@@ -83,8 +82,6 @@ class Window(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setStyleSheet(styleSheet)
-    window = Window()
-    window.show()
+    window = AddWindow()
+    window.show();
     sys.exit(app.exec())
-
