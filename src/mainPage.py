@@ -29,6 +29,8 @@ class Window(QWidget):
 
         startButton = QPushButton("Start")
         addButton = QPushButton("Add")
+        startButton.setObjectName("StartButton")
+        addButton.setObjectName("AddButton")
 
         horizontalLayout.addWidget(startButton)
         horizontalLayout.addWidget(addButton)
