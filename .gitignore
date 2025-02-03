@@ -4,4 +4,4 @@
 
 venv/
 
-/src/db/data
+/src/db/data/
