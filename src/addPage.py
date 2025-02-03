@@ -3,6 +3,7 @@ from PyQt6.QtCore import Qt, QPointF
 from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient
 from PyQt6.QtSql import QSqlDatabase, QSqlQuery
 import sys
+import subprocess
 
 
 class AddWindow(QWidget):
@@ -64,8 +65,10 @@ class AddWindow(QWidget):
     def gatherInfo(self):
         word = self.wordInput.text()
         definition = self.definitionInput.toPlainText()
+        subprocess.run([sys.executable, "db/words.py", word, definition])
 
-
+        self.wordInput.clear()
+        self.definitionInput.clear()
 
     
     def paintEvent(self, event):
