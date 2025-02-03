@@ -1,6 +1,7 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QTextEdit
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QTextEdit, QSpacerItem, QSizePolicy
 from PyQt6.QtCore import Qt, QPointF
 from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient
+from PyQt6.QtSql import QSqlDatabase, QSqlQuery
 import sys
 
 
@@ -19,10 +20,11 @@ class AddWindow(QWidget):
 
         returnButton = QPushButton("Return")
         returnButton.clicked.connect(self.openMainWindow)
+        returnButton.setStyleSheet("font-size: 15px;")
 
         info = QLabel("<h1> You can add new words here </h1>") 
         info.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        info.setStyleSheet("font-size: 12px;")
+        info.setStyleSheet("font-size: 11px;")
 
         wordLabel = QLabel("Word")
         self.wordInput = QLineEdit(self)
@@ -32,6 +34,15 @@ class AddWindow(QWidget):
         self.definitionInput = QTextEdit(self)
         self.definitionInput.setPlaceholderText("Type something...")
 
+        enterButton = QPushButton("Submit")
+        enterButton.clicked.connect(self.gatherInfo)
+        enterButton.setStyleSheet("font-size: 15px;")
+
+        # just for grid
+        expander = QWidget()
+        expander.setStyleSheet("background: transparent;")
+        expander.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
 
         grid.addWidget(returnButton, 0, 0, 1, 1)
         grid.addWidget(info, 1, 0, 1, 2)
@@ -39,6 +50,8 @@ class AddWindow(QWidget):
         grid.addWidget(self.wordInput, 3, 0, 1, 2) 
         grid.addWidget(definitionLabel, 4, 0, 1, 0)
         grid.addWidget(self.definitionInput, 5, 0, 2, 4)
+        grid.addWidget(enterButton, 7, 2)
+        grid.addWidget(expander, 0, 3, 5, 2)
 
         self.setLayout(grid)
 
@@ -47,6 +60,12 @@ class AddWindow(QWidget):
         if self.mainWindow:
             self.mainWindow.show()
         self.close()
+
+    def gatherInfo(self):
+        word = self.wordInput.text()
+        definition = self.definitionInput.toPlainText()
+
+
 
     
     def paintEvent(self, event):
