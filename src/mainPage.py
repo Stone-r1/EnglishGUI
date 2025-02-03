@@ -3,6 +3,7 @@ from PyQt6.QtCore import Qt, QPointF
 from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient
 from mainPageStyleSheet import styleSheet
 from addPage import AddWindow
+from startPage import StartWindow
 import sys
 
 
@@ -31,6 +32,7 @@ class Window(QWidget):
 
         startButton = QPushButton("Start") 
         startButton.setObjectName("StartButton")
+        startButton.clicked.connect(self.openStartWindow)
 
         addButton = QPushButton("Add")
         addButton.setObjectName("AddButton")
@@ -47,6 +49,12 @@ class Window(QWidget):
     def openAddWindow(self):
         self.addWindow = AddWindow(self)
         self.addWindow.show()
+        self.close()
+
+
+    def openStartWindow(self):
+        self.startWindow = StartWindow(self)
+        self.startWindow.show()
         self.close()
 
     

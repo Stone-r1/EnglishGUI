@@ -65,7 +65,7 @@ class AddWindow(QWidget):
     def gatherInfo(self):
         word = self.wordInput.text()
         definition = self.definitionInput.toPlainText()
-        subprocess.run([sys.executable, "db/words.py", word, definition])
+        subprocess.run([sys.executable, "db/words.py", word, definition, "ADD"])
 
         self.wordInput.clear()
         self.definitionInput.clear()

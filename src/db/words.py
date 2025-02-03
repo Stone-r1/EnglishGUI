@@ -2,6 +2,8 @@ import mysql.connector
 import os
 from dotenv import load_dotenv
 import sys
+import random
+import json
 
 load_dotenv()
 
@@ -56,6 +58,20 @@ class Database:
         """
         self.mycursor.execute(update, (definition, word))
 
+    
+    def countWords(self):
+        countQuery = """
+            SELECT COUNT(*) FROM WORDS
+        """
+        self.mycursor.execute(countQuery)
+        return self.mycursor.fetchone()[0]
+
+    
+    def getWords(self, index): 
+        self.mycursor.execute("SELECT WORD, DEFINITION FROM WORDS LIMIT 1 OFFSET %s", (index,))
+        result = self.mycursor.fetchone()
+        return result
+
 
     def commit_changes(self):
         self.mydb.commit()
@@ -68,15 +84,32 @@ class Database:
 if __name__ == "__main__":
     word = sys.argv[1]
     definition = sys.argv[2]
+    mode = sys.argv[3]
 
     db = Database()
-    db.create_table()
+    
+    if mode == "ADD":
+        db.create_table()
+
+        if db.check_word_exists(word) > 0:
+            db.update_word(word, definition)
+        else:
+            db.insert_word(word, definition)
+
+        db.commit_changes()
+
+    elif mode == "START":
+        max = db.countWords()
+        arr = random.sample(range(0, max), 20)
+
+        wordsDict = {}
+
+        for i in arr:
+            result = db.getWords(i)
+            if result:
+                wordsDict[result[0]] = result[1]
+
+        print(json.dumps(wordsDict))
 
 
-    if db.check_word_exists(word) > 0:
-        db.update_word(word, definition)
-    else:
-        db.insert_word(word, definition)
-
-    db.commit_changes()
     db.close()
