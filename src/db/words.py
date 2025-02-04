@@ -100,7 +100,7 @@ if __name__ == "__main__":
 
     elif mode == "START":
         max = db.countWords()
-        arr = random.sample(range(0, max), 20)
+        arr = random.sample(range(0, max), 1)
 
         wordsDict = {}
 

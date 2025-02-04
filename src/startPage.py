@@ -4,6 +4,7 @@ from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradie
 from PyQt6.QtSql import QSqlDatabase, QSqlQuery
 import sys
 import subprocess
+from resultPage import ResultWindow
 import json
 
 
@@ -12,6 +13,10 @@ class StartWindow(QWidget):
         super().__init__()
         self.mainWindow = mainWindow
         self.wordsDict = {}
+        self.wrongWordsDict = {}
+        self.wrongWord = 0
+        self.once = True
+        self.elapsedTime = QTime(0, 0, 0)
         self.currentWordIndex = 0
         self.currentWord = ""
         self.currentDefinition = ""
@@ -29,7 +34,7 @@ class StartWindow(QWidget):
         self.returnButton = QPushButton("Return")
         self.returnButton.clicked.connect(self.openMainWindow)
 
-        self.definitionLabel = QLabel("some random text fn")
+        self.definitionLabel = QLabel("Wait for 5 seconds... ")
         self.definitionLabel.setWordWrap(True)
         self.definitionLabel.setStyleSheet("font-size: 35px;")
 
@@ -44,7 +49,6 @@ class StartWindow(QWidget):
         # stopwatch
         self.stopWatch = QTimer(self)
         self.stopWatch.timeout.connect(self.updateTime)
-        self.elapsedTime = QTime(0, 0, 0)
 
         self.time = QLabel("Starting in 5...", self)
         self.time.setStyleSheet("font-size: 16px;")
@@ -85,7 +89,11 @@ class StartWindow(QWidget):
                 self.definitionLabel.setText(self.currentDefinition)
 
             else:
-                self.definitionLabel.setText("Congratulations, you've finished the quiz!")
+                # close current page and open result page
+                elapsedSeconds = QTime(0, 0, 0).secsTo(self.elapsedTime)
+                self.resultWindow = ResultWindow(self, self.wrongWord, elapsedSeconds, self.wrongWordsDict) 
+                self.resultWindow.show()
+                self.close()
         
         else:
             self.definitionLabel.setText("No words available.")
@@ -95,11 +103,17 @@ class StartWindow(QWidget):
         userInput = self.wordField.text().strip()
         if userInput.lower() == self.currentWord.lower():
             self.currentWordIndex += 1
+            self.once = True
             self.updateWord() 
             self.wordField.clear() 
+            self.wordField.setStyleSheet("background-color: rgba(249, 205, 106, 0.5);")
         else:
-            self.wordField.clear() 
-            self.definitionLabel.setText("Incorrect, try again!")
+            self.wrongWordsDict[self.currentWord] = self.currentDefinition
+            self.wordField.clear()
+            if self.once:
+                self.wrongWord += 1
+                self.once = False
+            self.wordField.setStyleSheet("background-color: rgba(245, 63, 63, 0.5);")
 
 
     def updateCountdown(self):
