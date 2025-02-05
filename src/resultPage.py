@@ -4,9 +4,10 @@ from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradie
 import sys
 
 class ResultWindow(QWidget):
-    def __init__(self, startPage, wrongWords, timeElapsed, wrongWordsDict):
+    def __init__(self, mainWindow, startPage, wrongWords, timeElapsed, wrongWordsDict):
         super().__init__()
         self.startPage = startPage
+        self.mainWindow = mainWindow
         self.wrongWords = wrongWords
         self.wrongWordsDict = wrongWordsDict
         self.timeElapsed = timeElapsed
@@ -63,7 +64,8 @@ class ResultWindow(QWidget):
 
 
     def mainMenuPage(self):
-        pass 
+        self.mainWindow.show()
+        self.close()
 
     
     def wordsExist(self):

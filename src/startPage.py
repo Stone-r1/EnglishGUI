@@ -126,7 +126,7 @@ class StartWindow(QWidget):
             else:
                 # close current page and open result page
                 elapsedSeconds = QTime(0, 0, 0).secsTo(self.elapsedTime)
-                self.resultWindow = ResultWindow(self, self.wrongWord, elapsedSeconds, self.wrongWordsDict) 
+                self.resultWindow = ResultWindow(self.mainWindow, self, self.wrongWord, elapsedSeconds, self.wrongWordsDict) 
                 self.resultWindow.show()
                 self.close()
         
