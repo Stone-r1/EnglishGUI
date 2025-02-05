@@ -12,6 +12,7 @@ class ResultWindow(QWidget):
         self.timeElapsed = timeElapsed
         self.UI()
 
+
     def UI(self):
         self.setFixedSize(400, 450)
         self.setWindowTitle("GUI")
@@ -56,11 +57,13 @@ class ResultWindow(QWidget):
        
 
     def restart(self):
-        pass
+        self.startPage.resetUI()
+        self.startPage.show()
+        self.close() 
 
 
     def mainMenuPage(self):
-        pass
+        pass 
 
     
     def wordsExist(self):
@@ -124,4 +127,3 @@ if __name__ == "__main__":
     window = ResultWindow()
     window.show()
     sys.exit(app.exec())
-
