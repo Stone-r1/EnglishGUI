@@ -1,11 +1,27 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QTextEdit 
 from PyQt6.QtCore import Qt, QPointF, QTimer, QTime
-from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient
-from PyQt6.QtSql import QSqlDatabase, QSqlQuery
+from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient, QKeyEvent
 import sys
 import subprocess
 from resultPage import ResultWindow
 import json
+
+
+class CustomLineEdit(QLineEdit):
+    def __init__(self, autoAccept = None, parent = None):
+        super().__init__(parent) 
+        self.autoAccept = autoAccept
+
+    
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
+            event.accept()
+
+            if self.autoAccept is not None:
+                self.autoAccept()
+
+            return
+        super().keyPressEvent(event)
 
 
 class StartWindow(QWidget):
@@ -16,6 +32,7 @@ class StartWindow(QWidget):
         self.wrongWordsDict = {}
         self.wrongWord = 0
         self.once = True
+        self.counntdownFinished = False
         self.elapsedTime = QTime(0, 0, 0)
         self.currentWordIndex = 0
         self.currentWord = ""
@@ -39,8 +56,9 @@ class StartWindow(QWidget):
         self.definitionLabel.setWordWrap(True)
         self.definitionLabel.setStyleSheet("font-size: 35px;")
 
-        self.wordField = QLineEdit(self)
+        self.wordField = CustomLineEdit(autoAccept = self.checkInfo, parent = self)
         self.wordField.setPlaceholderText("Write the word...")
+        self.wordField.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
 
         self.submitButton = QPushButton("Submit")
         self.submitButton.clicked.connect(self.checkInfo)
@@ -80,6 +98,7 @@ class StartWindow(QWidget):
         self.wrongWordsDict.clear()
         self.wrongWord = 0
         self.once = True
+        self.countdownFinished = False
         self.elapsedTime = QTime(0, 0, 0)
         self.currentWordIndex = 0
         self.currentWord = ""
@@ -135,6 +154,9 @@ class StartWindow(QWidget):
 
 
     def checkInfo(self):
+        if self.countdownFinished == False:
+            return
+
         userInput = self.wordField.text().strip()
         if userInput.lower() == self.currentWord.lower():
             self.currentWordIndex += 1
@@ -157,6 +179,7 @@ class StartWindow(QWidget):
             self.time.setText(f"Starting in {self.countdownTime}...")
         else:
             self.countdownTimer.stop()
+            self.countdownFinished = True
 
 
     def startStopWatch(self):
