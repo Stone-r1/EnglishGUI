@@ -9,34 +9,37 @@ import subprocess
 
 
 class CustomLineEdit(QLineEdit):
-    def __init__(self, nextWidget = None, parent = None):
+    def __init__(self, nextAction = None, parent = None, function = False):
         super().__init__(parent)
-        self.nextWidget = nextWidget
+        self.nextAction = nextAction
+        self.function = function
 
     
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
             event.accept()
 
-            if self.nextWidget is not None:
-                self.nextWidget.setFocus()
+            if self.nextAction is not None and not self.function:
+                self.nextAction.setFocus()
+            elif self.nextAction is not None and self.function:
+                self.nextAction()
 
             return
         super().keyPressEvent(event)
 
 
 class CustomTextEdit(QTextEdit):
-    def __init__(self, autoSubmit = None, parent = None):
+    def __init__(self, nextWidget = None, parent = None):
         super().__init__(parent)
-        self.autoSubmit = autoSubmit
+        self.nextWidget = nextWidget
 
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
             event.accept()
 
-            if self.autoSubmit is not None:
-                self.autoSubmit()
+            if self.nextWidget is not None:
+                self.nextWidget.setFocus()
 
             return
         super().keyPressEvent(event)
@@ -63,14 +66,18 @@ class AddWindow(QWidget):
         info.setAlignment(Qt.AlignmentFlag.AlignCenter)
         info.setStyleSheet("font-size: 11px;")
 
+        self.categoryInput = CustomLineEdit(nextAction = self.gatherInfo, parent = self, function = True)
+        self.categoryInput.setPlaceholderText("Enter Category...")
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+
         definitionLabel = QLabel("Definition")
         # create a CustomTextEdit and pass gatherInfo as the callback for enter.
-        self.definitionInput = CustomTextEdit(autoSubmit = self.gatherInfo, parent = self)
+        self.definitionInput = CustomTextEdit(nextWidget = self.categoryInput, parent = self)
         self.definitionInput.setPlaceholderText("Type something...")
         self.definitionInput.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
 
         wordLabel = QLabel("Word")
-        self.wordInput = CustomLineEdit(nextWidget = self.definitionInput, parent = self)
+        self.wordInput = CustomLineEdit(nextAction = self.definitionInput, parent = self, function = False)
         self.wordInput.setPlaceholderText("Type something...")
         self.wordInput.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         self.wordInput.setFocus()
@@ -90,6 +97,7 @@ class AddWindow(QWidget):
         grid.addWidget(self.wordInput, 3, 0, 1, 2)
         grid.addWidget(definitionLabel, 4, 0, 1, 0)
         grid.addWidget(self.definitionInput, 5, 0, 2, 4)
+        grid.addWidget(self.categoryInput, 7, 0, 1, 1)
         grid.addWidget(enterButton, 7, 2)
         grid.addWidget(expander, 0, 3, 5, 2)
 
@@ -104,8 +112,9 @@ class AddWindow(QWidget):
 
     def gatherInfo(self):
         word = self.wordInput.text()
+        category = self.categoryInput.text()
         definition = self.definitionInput.toPlainText()
-        subprocess.run([sys.executable, "db/words.py", word, definition, "ADD"])
+        subprocess.run([sys.executable, "db/words.py", word, definition, category, "ADD"])
 
         self.wordInput.clear()
         self.definitionInput.clear()

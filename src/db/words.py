@@ -26,54 +26,94 @@ class Database:
         self.mycursor = self.mydb.cursor()
 
 
-    def create_table(self):
+    def createTable(self):
         wordRecord = """
             CREATE TABLE IF NOT EXISTS WORDS (
             WORD VARCHAR(20) NOT NULL,
             DEFINITION VARCHAR(100) NOT NULL,
-            PRIMARY KEY (WORD)
+            CATEGORY VARCHAR(50) DEFAULT 'ALL',
+            PRIMARY KEY (WORD, CATEGORY)
             )
         """
         self.mycursor.execute(wordRecord)
 
 
-    def check_word_exists(self, word):
+    def checkWordExists(self, word):
         check = """
-            SELECT COUNT(*) FROM WORDS WHERE WORD = %s
+            SELECT COUNT(*)
+            FROM WORDS
+            WHERE WORD = %s
         """
         self.mycursor.execute(check, (word,))
         return self.mycursor.fetchone()[0]
 
 
-    def insert_word(self, word, definition):
+    def insertWord(self, word, definition, category):
         insert = """
-            INSERT INTO WORDS (WORD, DEFINITION) VALUES (%s, %s)
+            INSERT INTO WORDS (WORD, DEFINITION, CATEGORY)
+            VALUES (%s, %s, %s)
         """
-        self.mycursor.execute(insert, (word, definition))
+        self.mycursor.execute(insert, (word, definition, category))
 
 
-    def update_word(self, word, definition):
+    def updateWord(self, word, definition, category):
         update = """
-            UPDATE WORDS SET DEFINITION = %s WHERE WORD = %s
+            UPDATE WORDS
+            SET DEFINITION = %s,CATEGORY = %s 
+            WHERE WORD = %s
         """
-        self.mycursor.execute(update, (definition, word))
+        self.mycursor.execute(update, (definition, category, word))
 
     
-    def countWords(self):
+    def countAllWords(self):
         countQuery = """
-            SELECT COUNT(*) FROM WORDS
+            SELECT COUNT(*)
+            FROM WORDS
         """
         self.mycursor.execute(countQuery)
         return self.mycursor.fetchone()[0]
 
+
+    def countCategoryWords(self, category):
+        if category == "ALL":
+            return self.countAllWords()
+
+        countQuery = """
+            SELECT COUNT(*)
+            FROM WORDS
+            WHERE CATEGORY = %s
+        """
+        self.mycursor.execute(countQuery, (category,))
+        return self.mycursor.fetchone()[0]
+
     
-    def getWords(self, index): 
-        self.mycursor.execute("SELECT WORD, DEFINITION FROM WORDS LIMIT 1 OFFSET %s", (index,))
+    def getWordsAll(self, index):
+        query = """
+            SELECT WORD, DEFINITION
+            FROM WORDS
+            LIMIT 1 OFFSET %s 
+        """
+        self.mycursor.execute(query, (index,))
         result = self.mycursor.fetchone()
         return result
 
 
-    def commit_changes(self):
+    def getWordsCategory(self, index, category):
+        if category == "ALL":
+            return self.getWordsAll(index)
+
+        query = """
+            SELECT WORD, DEFINITION 
+            FROM WORDS 
+            WHERE CATEGORY = %s 
+            LIMIT 1 OFFSET %s
+        """
+        self.mycursor.execute(query, (category, index))
+        result = self.mycursor.fetchone()
+        return result
+
+
+    def commitChanges(self):
         self.mydb.commit()
 
 
@@ -81,35 +121,42 @@ class Database:
         self.mydb.close()
 
 
+def addWord(db, word, definition, category): 
+    db.createTable()
+
+    if db.checkWordExists(word) > 0:
+        db.updateWord(word, definition, category)
+    else:
+        db.insertWord(word, definition, category)
+
+    db.commitChanges()
+
+
+def startGame(db, category):
+    max = db.countCategoryWords(category)
+
+    arr = random.sample(range(0, max), 20)
+    wordsDict = {}
+
+    for i in arr:
+        result = db.getWordsCategory(i, category)
+        if result:
+            wordsDict[result[0]] = result[1]
+
+    print(json.dumps(wordsDict))
+
+
 if __name__ == "__main__":
     word = sys.argv[1]
     definition = sys.argv[2]
-    mode = sys.argv[3]
+    category = sys.argv[3]
+    mode = sys.argv[4]
 
     db = Database()
     
     if mode == "ADD":
-        db.create_table()
-
-        if db.check_word_exists(word) > 0:
-            db.update_word(word, definition)
-        else:
-            db.insert_word(word, definition)
-
-        db.commit_changes()
-
+        addWord(db, word, definition, category)
     elif mode == "START":
-        max = db.countWords()
-        arr = random.sample(range(0, max), 20)
-
-        wordsDict = {}
-
-        for i in arr:
-            result = db.getWords(i)
-            if result:
-                wordsDict[result[0]] = result[1]
-
-        print(json.dumps(wordsDict))
-
+        startGame(db, category)
 
     db.close()

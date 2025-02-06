@@ -129,7 +129,8 @@ class StartWindow(QWidget):
 
 
     def getWords(self):
-        result = subprocess.run([sys.executable, "db/words.py", "1", "2", "START"], capture_output=True, text=True)
+        category = "ALL"
+        result = subprocess.run([sys.executable, "db/words.py", "1", "2", category, "START"], capture_output=True, text=True)
         self.wordsDict = json.loads(result.stdout)
         self.updateWord()
 
