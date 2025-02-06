@@ -8,8 +8,7 @@ styleSheet = """
     QLabel {
         background: transparent;
         font-weight: 600;
-    }
-    
+    } 
     
     QLineEdit {
         border: 2px solid #F9CD6A;
@@ -17,6 +16,8 @@ styleSheet = """
         padding: 5px 15px;
         background-color: rgba(249, 205, 106, 0.5);
         color: #4840A3;
+        selection-background-color: #F9CD6A; 
+        selection-color: #D8EFF7;
         font-weight: 600;
     }
 
@@ -30,7 +31,9 @@ styleSheet = """
         border-radius: 10px;
         padding: 5px 15px;
         background-color: rgba(249, 205, 106, 0.5);
-        color: #4840A3;
+        color: #4840A3; 
+        selection-background-color: #F9CD6A; 
+        selection-color: #D8EFF7;
         font-weight: 600;
     }
 

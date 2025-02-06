@@ -1,16 +1,52 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QTextEdit, QSpacerItem, QSizePolicy
+from PyQt6.QtWidgets import (
+    QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout,
+    QTextEdit, QSizePolicy
+)
 from PyQt6.QtCore import Qt, QPointF
-from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient
-from PyQt6.QtSql import QSqlDatabase, QSqlQuery
+from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient, QKeyEvent
 import sys
 import subprocess
 
 
+class CustomLineEdit(QLineEdit):
+    def __init__(self, nextWidget = None, parent = None):
+        super().__init__(parent)
+        self.nextWidget = nextWidget
+
+    
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
+            event.accept()
+
+            if self.nextWidget is not None:
+                self.nextWidget.setFocus()
+
+            return
+        super().keyPressEvent(event)
+
+
+class CustomTextEdit(QTextEdit):
+    def __init__(self, autoSubmit = None, parent = None):
+        super().__init__(parent)
+        self.autoSubmit = autoSubmit
+
+
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
+            event.accept()
+
+            if self.autoSubmit is not None:
+                self.autoSubmit()
+
+            return
+        super().keyPressEvent(event)
+
+
 class AddWindow(QWidget):
-    def __init__(self, mainWindow):
-        super().__init__()
+    def __init__(self, mainWindow=None):
+        super().__init__() 
         self.mainWindow = mainWindow
-        self.UI()
+        self.UI() 
 
 
     def UI(self): 
@@ -27,28 +63,31 @@ class AddWindow(QWidget):
         info.setAlignment(Qt.AlignmentFlag.AlignCenter)
         info.setStyleSheet("font-size: 11px;")
 
-        wordLabel = QLabel("Word")
-        self.wordInput = QLineEdit(self)
-        self.wordInput.setPlaceholderText("Type something...")
-
-        definitionLabel = QLabel("Definition") 
-        self.definitionInput = QTextEdit(self)
+        definitionLabel = QLabel("Definition")
+        # create a CustomTextEdit and pass gatherInfo as the callback for enter.
+        self.definitionInput = CustomTextEdit(autoSubmit = self.gatherInfo, parent = self)
         self.definitionInput.setPlaceholderText("Type something...")
+        self.definitionInput.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+
+        wordLabel = QLabel("Word")
+        self.wordInput = CustomLineEdit(nextWidget = self.definitionInput, parent = self)
+        self.wordInput.setPlaceholderText("Type something...")
+        self.wordInput.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+        self.wordInput.setFocus()
 
         enterButton = QPushButton("Submit")
         enterButton.clicked.connect(self.gatherInfo)
         enterButton.setStyleSheet("font-size: 15px;")
 
-        # just for grid
+        # Just for grid expansion.
         expander = QWidget()
         expander.setStyleSheet("background: transparent;")
         expander.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
-
         grid.addWidget(returnButton, 0, 0, 1, 1)
         grid.addWidget(info, 1, 0, 1, 2)
         grid.addWidget(wordLabel, 2, 0)
-        grid.addWidget(self.wordInput, 3, 0, 1, 2) 
+        grid.addWidget(self.wordInput, 3, 0, 1, 2)
         grid.addWidget(definitionLabel, 4, 0, 1, 0)
         grid.addWidget(self.definitionInput, 5, 0, 2, 4)
         grid.addWidget(enterButton, 7, 2)
@@ -56,11 +95,12 @@ class AddWindow(QWidget):
 
         self.setLayout(grid)
 
-    
+
     def openMainWindow(self):
         if self.mainWindow:
             self.mainWindow.show()
         self.close()
+
 
     def gatherInfo(self):
         word = self.wordInput.text()
@@ -70,10 +110,10 @@ class AddWindow(QWidget):
         self.wordInput.clear()
         self.definitionInput.clear()
 
-    
+
     def paintEvent(self, event):
         painter = QPainter(self)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing) 
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.setPen(Qt.GlobalColor.transparent)
         
         gradient = QLinearGradient(QPointF(self.width(), 0), QPointF(0, self.height()))
@@ -93,17 +133,16 @@ class AddWindow(QWidget):
         painter.drawEllipse(self.width() - 600, self.height() - 470, 500, 500)
 
         radialGradient = QRadialGradient(QPointF(self.width() - 30, 30), 100)
-        radialGradient.setColorAt(0, QColor("#F6B420")) 
-        radialGradient.setColorAt(1, QColor("#F9CD6A")) 
+        radialGradient.setColorAt(0, QColor("#F6B420"))
+        radialGradient.setColorAt(1, QColor("#F9CD6A"))
 
         brush = QBrush(radialGradient)
         painter.setBrush(brush)
-
         painter.drawEllipse(self.width() - 100, 30, 80, 80)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":   
     app = QApplication(sys.argv)
     window = AddWindow()
-    window.show();
+    window.show()
     sys.exit(app.exec())
