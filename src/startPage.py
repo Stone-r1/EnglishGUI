@@ -25,9 +25,9 @@ class CustomLineEdit(QLineEdit):
 
 
 class StartWindow(QWidget):
-    def __init__(self, mainWindow):
+    def __init__(self, modeWindow):
         super().__init__()
-        self.mainWindow = mainWindow
+        self.modeWindow = modeWindow
         self.wordsDict = {}
         self.wrongWordsDict = {}
         self.wrongWord = 0
@@ -50,7 +50,7 @@ class StartWindow(QWidget):
         gridLayout = QGridLayout()
 
         self.returnButton = QPushButton("Return")
-        self.returnButton.clicked.connect(self.openMainWindow)
+        self.returnButton.clicked.connect(self.openModeWindow)
 
         self.definitionLabel = QLabel("Wait for 5 seconds... ")
         self.definitionLabel.setWordWrap(True)
@@ -202,9 +202,9 @@ class StartWindow(QWidget):
         self.stopWatch.stop()
 
 
-    def openMainWindow(self):
-        if self.mainWindow:
-            self.mainWindow.show()
+    def openModeWindow(self):
+        if self.modeWindow:
+            self.modeWindow.show()
         self.close()
 
 

@@ -122,31 +122,34 @@ class AddWindow(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing) 
         painter.setPen(Qt.GlobalColor.transparent)
-        
+
+        # background
         gradient = QLinearGradient(QPointF(self.width(), 0), QPointF(0, self.height()))
-        gradient.setColorAt(1, QColor("#F9CD6A"))
-        gradient.setColorAt(0, QColor("#F6B420"))
+        gradient.setColorAt(1, QColor("#388087"))
+        gradient.setColorAt(0, QColor("#6FB3B8"))
 
         brush = QBrush(gradient)
         painter.setBrush(brush)
         painter.drawRect(0, 0, self.width(), self.height())
 
+        # big circle
         circle = QRadialGradient(QPointF(0, 0), 500)
-        circle.setColorAt(1, QColor(156, 187, 252, 120))
-        circle.setColorAt(0, QColor("#F6B420"))
+        circle.setColorAt(1, QColor(185, 248, 255, 120))
+        circle.setColorAt(0, QColor("#C2EDCE"))
 
         brush = QBrush(circle)
         painter.setBrush(brush)
-        painter.drawEllipse(self.width() - 600, self.height() - 470, 500, 500)
+        painter.drawEllipse(self.width() - 700, self.height() - 350, 500, 500)
 
         radialGradient = QRadialGradient(QPointF(self.width() - 30, 30), 100)
-        radialGradient.setColorAt(0, QColor("#F6B420"))
-        radialGradient.setColorAt(1, QColor("#F9CD6A"))
+        radialGradient.setColorAt(0, QColor("#F6F6F2")) 
+        radialGradient.setColorAt(1, QColor("#B9F8FF")) 
 
         brush = QBrush(radialGradient)
         painter.setBrush(brush)
+
         painter.drawEllipse(self.width() - 100, 30, 80, 80)
 
 
