@@ -87,7 +87,7 @@ class Database:
         return self.mycursor.fetchone()[0]
 
     
-    def getWordsAll(self, index):
+    def getAllWords(self, index):
         query = """
             SELECT WORD, DEFINITION
             FROM WORDS
@@ -98,9 +98,9 @@ class Database:
         return result
 
 
-    def getWordsCategory(self, index, category):
+    def getCategoryWords(self, index, category):
         if category == "ALL":
-            return self.getWordsAll(index)
+            return self.getAllWords(index)
 
         query = """
             SELECT WORD, DEFINITION 
@@ -144,34 +144,51 @@ def addWord(db, word, definition, category):
     db.commitChanges()
 
 
-def startGame(db, category):
+def startGame(db, category, wordAmount):
     max = db.countCategoryWords(category)
 
-    arr = random.sample(range(0, max), 1)
+    arr = random.sample(range(0, max), int(wordAmount))
     wordsDict = {}
 
     for i in arr:
-        result = db.getWordsCategory(i, category)
+        result = db.getCategoryWords(i, category)
         if result:
             wordsDict[result[0]] = result[1]
 
     print(json.dumps(wordsDict))
 
 
+def getCategories(db):
+    categories = db.getAllCategories()
+    print(json.dumps(categories))
+
+
+def countWords(db, category):
+    if category == "ALL":
+        total = db.countAllWords()
+    else:
+        total = db.countCategoryWords(category)
+
+    print(json.dumps(total))
+
+
 if __name__ == "__main__":
     word = sys.argv[1]
     definition = sys.argv[2]
     category = sys.argv[3]
-    mode = sys.argv[4]
+    wordAmount = sys.argv[4]
+    mode = sys.argv[5]
 
     db = Database()
     
     if mode == "ADD":
         addWord(db, word, definition, category)
     elif mode == "START":
-        startGame(db, category)
+        startGame(db, category, wordAmount)
     elif mode == "GET":
-        categoryList = db.getAllCategories()
-        print(json.dumps(categoryList))
+        getCategories(db)
+    elif mode == "COUNT":
+        countWords(db, category)
+
 
     db.close()

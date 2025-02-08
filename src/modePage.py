@@ -35,6 +35,7 @@ class ModeWindow(QWidget):
         self.categoryList = []
         self.amount = 0
         self.category = ""
+        self.maxWords = 20
 
         self.UI()
         self.getCategories()
@@ -57,7 +58,7 @@ class ModeWindow(QWidget):
         categoryLabel = QLabel("Category")
         self.categoryComboBox = QComboBox()
         self.categoryComboBox.setFixedWidth(250)
-        # gotta add items later
+        self.categoryComboBox.addItem("ALL")
 
         wordAmountLabel = QLabel(" MAX 20")
         self.wordAmount = CustomLineEdit(checkValidity = self.checkValidity, parent = self)
@@ -111,12 +112,15 @@ class ModeWindow(QWidget):
 
 
     def getCategories(self):
-        result = subprocess.run([sys.executable, "db/words.py", "1", "2", "3", "GET"], capture_output=True, text=True)
+        result = subprocess.run([sys.executable, "db/words.py", "1", "2", "3", "4", "GET"], capture_output=True, text=True)
         if result.returncode != 0:
             print("Subprocess error:", result.stderr)
+
         self.categoryList = json.loads(result.stdout)
         for i in self.categoryList:
-            self.categoryComboBox.addItem(i)
+            maxForCategory = subprocess.run([sys.executable, "db/words.py", "1", "2", i, "4", "COUNT"], capture_output=True, text=True)
+            self.maxWords = json.loads(maxForCategory.stdout)
+            self.categoryComboBox.addItem(i + "  ==  " + str(self.maxWords))
 
 
     def startOrdinaryMode(self):
@@ -132,9 +136,13 @@ class ModeWindow(QWidget):
             self.wordAmount.setStyleSheet("background-color: rgba(245, 63, 63, 0.5);")
             self.wordAmount.setPlaceholderText("20!!!")
         else:
-            # check if there are that many words (later)
-            self.category = self.categoryComboBox.currentText()
-            self.startOrdinaryMode()
+            self.category = self.categoryComboBox.currentText().split("  ==")[0].strip()
+            maxForCategory = subprocess.run([sys.executable, "db/words.py", "1", "2", self.category, "4", "COUNT"], capture_output=True, text=True)
+            self.maxWords = json.loads(maxForCategory.stdout) 
+            if self.maxWords < self.amount:
+                pass #warning
+            else:
+                self.startOrdinaryMode()
 
     
     def startHardMode(self):

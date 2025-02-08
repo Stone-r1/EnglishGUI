@@ -103,7 +103,7 @@ class StartWindow(QWidget):
 
 
     def getWords(self):
-        result = subprocess.run([sys.executable, "db/words.py", "1", "2", self.category, "START"],capture_output=True,text=True) 
+        result = subprocess.run([sys.executable, "db/words.py", "1", "2", self.category, str(self.wordAmount), "START"],capture_output=True,text=True) 
         self.wordsDict = json.loads(result.stdout)
         self.updateWord()
 
@@ -119,7 +119,7 @@ class StartWindow(QWidget):
             else:
                 # close current page and open result page
                 elapsedSeconds = QTime(0, 0, 0).secsTo(self.elapsedTime)
-                self.resultWindow = ResultWindow(self.mainWindow, self.modeWindow, self.wrongWord, elapsedSeconds, self.wrongWordsDict) 
+                self.resultWindow = ResultWindow(self.mainWindow, self.modeWindow, self.wrongWord, elapsedSeconds, self.wrongWordsDict, self.wordAmount) 
                 self.resultWindow.show()
                 self.close()
         
@@ -144,7 +144,7 @@ class StartWindow(QWidget):
             if self.once:
                 self.wrongWord += 1
                 self.once = False
-            self.wordField.setStyleSheet("background-color: rgba(245, 63, 63, 0.5);")
+            self.wordField.setStyleSheet("background-color: rgba(194, 237, 206, 0.5);")
 
 
     def updateCountdown(self):

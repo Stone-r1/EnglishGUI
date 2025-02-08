@@ -120,7 +120,7 @@ class AddWindow(QWidget):
         word = self.wordInput.text()
         category = self.categoryInput.text()
         definition = self.definitionInput.toPlainText()
-        subprocess.run([sys.executable, "db/words.py", word, definition, category, "ADD"])
+        subprocess.run([sys.executable, "db/words.py", word, definition, category, "1", "ADD"]) # placeholder 1
 
         self.wordInput.clear()
         self.definitionInput.clear()

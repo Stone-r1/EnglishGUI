@@ -7,11 +7,12 @@ import sys
 
 
 class ResultWindow(QWidget):
-    def __init__(self, mainWindow, modeWindow, wrongWords, timeElapsed, wrongWordsDict):
+    def __init__(self, mainWindow, modeWindow, wrongWords, timeElapsed, wrongWordsDict, wordAmount):
         super().__init__()
         self.modeWindow = modeWindow
         self.mainWindow = mainWindow
         self.wrongWords = wrongWords
+        self.wordAmount = wordAmount
         self.wrongWordsDict = wrongWordsDict
         self.timeElapsed = timeElapsed
         self.UI()
@@ -33,7 +34,7 @@ class ResultWindow(QWidget):
         timeLabelA.setStyleSheet("background: transparent; font-size: 20px;")
         timeLabelB.setStyleSheet("background: transparent; font-size: 20px;")
 
-        scoreLabel = QLabel("You got " + str(20 - self.wrongWords) + " / 20 words right!")
+        scoreLabel = QLabel("You got " + str(self.wordAmount - self.wrongWords) + " / " + str(self.wordAmount) + " words right!")
         scoreLabel.setStyleSheet("background: transparent; font-size: 26px;")
 
         self.suggestionLabel = QLabel("Words to revise:")
