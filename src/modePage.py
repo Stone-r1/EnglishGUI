@@ -1,23 +1,14 @@
-"""
-TODO: 
-    this page is to choose game mode.
-    main idea:
-        choose how many words will be in quiz
-        choose category from which words will be gathered
-
-        preferably: hard mode (you're limited in time) and background changes color to red
-        time can be chosen manually, category will be ALL by default
-
-        hmm other ideas later
-"""
-
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QTextEdit, QComboBox, QVBoxLayout
 from PyQt6.QtCore import Qt, QPointF
 from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient, QKeyEvent
+
 import sys
+import subprocess
+import json
 
 from helpers.backgroundCanvas import BackgroundCanvas
 from helpers.mainPageStyleSheet import styleSheet
+from startPage import StartWindow
 
 
 class CustomLineEdit(QLineEdit):
@@ -41,7 +32,12 @@ class ModeWindow(QWidget):
     def __init__(self, mainWindow):
         super().__init__()
         self.mainWindow = mainWindow
+        self.categoryList = []
+        self.amount = 0
+        self.category = ""
+
         self.UI()
+        self.getCategories()
 
 
     def UI(self):
@@ -59,13 +55,12 @@ class ModeWindow(QWidget):
         self.returnButton.clicked.connect(self.returnToMainWindow)
 
         categoryLabel = QLabel("Category")
-        self.categoryList = QComboBox()
-        self.categoryList.addItems(["Week 1", "Week 2", "Week 3"])
-        self.categoryList.setFixedWidth(250)
+        self.categoryComboBox = QComboBox()
+        self.categoryComboBox.setFixedWidth(250)
         # gotta add items later
 
         wordAmountLabel = QLabel(" MAX 20")
-        self.wordAmount = CustomLineEdit()
+        self.wordAmount = CustomLineEdit(checkValidity = self.checkValidity, parent = self)
         self.wordAmount.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         self.wordAmount.setFixedWidth(120)
         self.wordAmount.setPlaceholderText("Words")
@@ -97,7 +92,7 @@ class ModeWindow(QWidget):
         grid.addWidget(categoryLabel, 1, 2, 1, 2, Qt.AlignmentFlag.AlignBottom)
         grid.addWidget(wordAmountLabel, 1, 0, 1, 2, Qt.AlignmentFlag.AlignBottom)
 
-        grid.addWidget(self.categoryList, 2, 2, 1, 3, Qt.AlignmentFlag.AlignTop)
+        grid.addWidget(self.categoryComboBox, 2, 2, 1, 3, Qt.AlignmentFlag.AlignTop)
         grid.addWidget(self.wordAmount, 2, 0, 1, 1, Qt.AlignmentFlag.AlignTop)
 
         grid.addWidget(labelContainer, 4, 0, 1, 4)
@@ -115,16 +110,35 @@ class ModeWindow(QWidget):
         self.close()
 
 
+    def getCategories(self):
+        result = subprocess.run([sys.executable, "db/words.py", "1", "2", "3", "GET"], capture_output=True, text=True)
+        if result.returncode != 0:
+            print("Subprocess error:", result.stderr)
+        self.categoryList = json.loads(result.stdout)
+        for i in self.categoryList:
+            self.categoryComboBox.addItem(i)
+
+
+    def startOrdinaryMode(self):
+        self.startWindow = StartWindow(self.mainWindow, self, self.amount, self.category)  
+        self.startWindow.show()
+        self.close()
+
+
     def checkValidity(self):
-        pass
+        self.amount = int(self.wordAmount.text())
+        if self.amount > 20 or self.amount < 1:
+            self.wordAmount.clear()
+            self.wordAmount.setStyleSheet("background-color: rgba(245, 63, 63, 0.5);")
+            self.wordAmount.setPlaceholderText("20!!!")
+        else:
+            # check if there are that many words (later)
+            self.category = self.categoryComboBox.currentText()
+            self.startOrdinaryMode()
 
     
     def startHardMode(self):
-        pass
-
-    
-    def startOrdinaryMode(self):
-        pass
+        pass 
 
 
 if __name__ == "__main__":

@@ -111,7 +111,19 @@ class Database:
         self.mycursor.execute(query, (category, index))
         result = self.mycursor.fetchone()
         return result
+    
 
+    def getAllCategories(self):
+        query = """
+            SELECT DISTINCT CATEGORY
+            FROM WORDS
+            ORDER BY CATEGORY
+        """
+        self.mycursor.execute(query)
+        result = self.mycursor.fetchall()
+        categories = [category[0] for category in result]
+        return categories
+    
 
     def commitChanges(self):
         self.mydb.commit()
@@ -135,7 +147,7 @@ def addWord(db, word, definition, category):
 def startGame(db, category):
     max = db.countCategoryWords(category)
 
-    arr = random.sample(range(0, max), 20)
+    arr = random.sample(range(0, max), 1)
     wordsDict = {}
 
     for i in arr:
@@ -158,5 +170,8 @@ if __name__ == "__main__":
         addWord(db, word, definition, category)
     elif mode == "START":
         startGame(db, category)
+    elif mode == "GET":
+        categoryList = db.getAllCategories()
+        print(json.dumps(categoryList))
 
     db.close()

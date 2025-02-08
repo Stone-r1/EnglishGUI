@@ -1,7 +1,7 @@
 styleSheet = """
     
     * {
-        background-color: #F6B420; /* fallback for widgets without a painted background */ 
+        background-color: #388087;  
         font-family: "Comic Sans MS", "Baloo", "Fredoka One", sans-serif;
         color: #36557B;
         font-size: 25px;
@@ -78,6 +78,12 @@ styleSheet = """
         font-weight: 600;
     }
 
+    QComboBox::item {
+        border: none;
+        height: 45px;
+        padding: 5px;
+    }
+
     QComboBox:focus {
         border: 2px solid #6FB3B8;
         background-color: rgba(194, 237, 206, 0.7);
@@ -92,5 +98,6 @@ styleSheet = """
         border-bottom-right-radius: 10px;
         background-color: rgba(194, 237, 206, 0.5);
     }
+
 """
 

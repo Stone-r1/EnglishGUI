@@ -39,7 +39,7 @@ class BackgroundCanvas(QWidget):
         painter.drawEllipse(self.width() - 700, self.height() - 350, 500, 500)
 
         radialGradient = QRadialGradient(QPointF(self.width() - 30, 30), 100)
-        radialGradient.setColorAt(0, QColor("#F6F6F2")) 
+        radialGradient.setColorAt(0, QColor("#EBF7FA")) 
         radialGradient.setColorAt(1, QColor("#B9F8FF")) 
 
         brush = QBrush(radialGradient)

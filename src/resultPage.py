@@ -3,14 +3,13 @@ from PyQt6.QtCore import Qt, QPointF, QRect
 from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient, QPixmap, QImage
 
 from helpers.backgroundCanvas import BackgroundCanvas
-
 import sys
 
 
 class ResultWindow(QWidget):
-    def __init__(self, mainWindow, startPage, wrongWords, timeElapsed, wrongWordsDict):
+    def __init__(self, mainWindow, modeWindow, wrongWords, timeElapsed, wrongWordsDict):
         super().__init__()
-        self.startPage = startPage
+        self.modeWindow = modeWindow
         self.mainWindow = mainWindow
         self.wrongWords = wrongWords
         self.wrongWordsDict = wrongWordsDict
@@ -66,8 +65,8 @@ class ResultWindow(QWidget):
        
 
     def restart(self):
-        self.startPage.resetUI()
-        self.startPage.show()
+        if self.modeWindow:
+            self.modeWindow.show()
         self.close() 
 
 

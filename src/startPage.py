@@ -28,21 +28,23 @@ class CustomLineEdit(QLineEdit):
 
 
 class StartWindow(QWidget):
-    def __init__(self, modeWindow):
+    def __init__(self, mainWindow, modeWindow, wordAmount, category):
         super().__init__()
         self.modeWindow = modeWindow
+        self.mainWindow = mainWindow
         self.wordsDict = {}
         self.wrongWordsDict = {}
         self.wrongWord = 0
         self.once = True
-        self.counntdownFinished = False
+        self.countdownFinished = False
         self.elapsedTime = QTime(0, 0, 0)
         self.currentWordIndex = 0
         self.currentWord = ""
         self.currentDefinition = ""
+        self.wordAmount = wordAmount
+        self.category = category
 
         self.UI() 
-        self.resetUI()
         self.getWords() 
 
 
@@ -100,44 +102,8 @@ class StartWindow(QWidget):
         self.setLayout(gridLayout) 
 
 
-    def resetUI(self): 
-        self.wordsDict.clear()
-        self.wrongWordsDict.clear()
-        self.wrongWord = 0
-        self.once = True
-        self.countdownFinished = False
-        self.elapsedTime = QTime(0, 0, 0)
-        self.currentWordIndex = 0
-        self.currentWord = ""
-        self.currentDefinition = ""
-
-        # update the primordial condition
-        self.definitionLabel.setText("Wait for 5 seconds...")
-
-        self.wordField.clear() 
-        self.wordField.setStyleSheet("background-color: rgba(249, 205, 106, 0.5);")
-
-        self.time.setText("Starting in 5...")
-        self.time.setStyleSheet("font-size: 16px;")
-
-        self.submitButton.blockSignals(True)
-
-        self.countdownTimer.stop()
-        self.stopWatch.stop()
-
-        self.countdownTime = 5  
-        self.countdownTimer.start(1000)  
-
-        # stop and delay timer
-        self.delayTimer.stop()
-        self.delayTimer.start(5000)
-
-        self.getWords()
-
-
     def getWords(self):
-        category = "ALL"
-        result = subprocess.run([sys.executable, "db/words.py", "1", "2", category, "START"], capture_output=True, text=True)
+        result = subprocess.run([sys.executable, "db/words.py", "1", "2", self.category, "START"],capture_output=True,text=True) 
         self.wordsDict = json.loads(result.stdout)
         self.updateWord()
 
@@ -153,7 +119,7 @@ class StartWindow(QWidget):
             else:
                 # close current page and open result page
                 elapsedSeconds = QTime(0, 0, 0).secsTo(self.elapsedTime)
-                self.resultWindow = ResultWindow(self.mainWindow, self, self.wrongWord, elapsedSeconds, self.wrongWordsDict) 
+                self.resultWindow = ResultWindow(self.mainWindow, self.modeWindow, self.wrongWord, elapsedSeconds, self.wrongWordsDict) 
                 self.resultWindow.show()
                 self.close()
         
@@ -213,6 +179,7 @@ class StartWindow(QWidget):
         if self.modeWindow:
             self.modeWindow.show()
         self.close()
+        pass
 
 
 if __name__ == "__main__":
