@@ -1,4 +1,7 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QTextEdit, QComboBox, QVBoxLayout
+from PyQt6.QtWidgets import (
+        QApplication, QWidget, QPushButton, QMessageBox,
+        QLabel, QLineEdit, QGridLayout, QTextEdit, QComboBox, QVBoxLayout
+)
 from PyQt6.QtCore import Qt, QPointF
 from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient, QKeyEvent
 
@@ -124,13 +127,23 @@ class ModeWindow(QWidget):
 
 
     def startOrdinaryMode(self):
-        self.startWindow = StartWindow(self.mainWindow, self, self.amount, self.category)  
+        mode = "ORDINARY"
+        self.startWindow = StartWindow(self.mainWindow, self, self.amount, self.category, mode)  
         self.startWindow.show()
         self.close()
 
 
+    def notEnoughWordsInCategory(self):
+        warningMessage = QMessageBox()
+        warningMessage.setText("Not enough words in the current category")
+        okButton = warningMessage.addButton("Return", QMessageBox.ButtonRole.YesRole)
+        warningMessage.exec()
+
+
     def checkValidity(self):
-        self.amount = int(self.wordAmount.text())
+        if self.wordAmount.text().isdigit():
+            self.amount = int(self.wordAmount.text())
+    
         if self.amount > 20 or self.amount < 1:
             self.wordAmount.clear()
             self.wordAmount.setStyleSheet("background-color: rgba(245, 63, 63, 0.5);")
@@ -139,14 +152,23 @@ class ModeWindow(QWidget):
             self.category = self.categoryComboBox.currentText().split("  ==")[0].strip()
             maxForCategory = subprocess.run([sys.executable, "db/words.py", "1", "2", self.category, "4", "COUNT"], capture_output=True, text=True)
             self.maxWords = json.loads(maxForCategory.stdout) 
-            if self.maxWords < self.amount:
-                pass #warning
+
+            if self.maxWords < self.amount: # warning
+                self.notEnoughWordsInCategory()
+
             else:
+                # for future use 
+                self.wordAmount.setStyleSheet("background-color: rgba(194, 237, 206, 0.5);")
+                self.wordAmount.clear()
+                self.categoryComboBox.setCurrentIndex(0)
                 self.startOrdinaryMode()
 
     
     def startHardMode(self):
-        pass 
+        mode = "HARD"
+        self.startWindow = StartWindow(self.mainWindow, self, 20, "ALL", mode)  
+        self.startWindow.show()
+        self.close()
 
 
 if __name__ == "__main__":

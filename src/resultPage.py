@@ -7,7 +7,7 @@ import sys
 
 
 class ResultWindow(QWidget):
-    def __init__(self, mainWindow, modeWindow, wrongWords, timeElapsed, wrongWordsDict, wordAmount):
+    def __init__(self, mainWindow, modeWindow, wrongWords, timeElapsed, wrongWordsDict, wordAmount, mode, outcome):
         super().__init__()
         self.modeWindow = modeWindow
         self.mainWindow = mainWindow
@@ -15,6 +15,8 @@ class ResultWindow(QWidget):
         self.wordAmount = wordAmount
         self.wrongWordsDict = wrongWordsDict
         self.timeElapsed = timeElapsed
+        self.mode = mode
+        self.outcome = outcome
         self.UI()
 
 
@@ -27,16 +29,25 @@ class ResultWindow(QWidget):
         self.background.lower()
         
         grid = QGridLayout()
+        
+        if self.mode == "HARD":
+            scoreLabel = QLabel(" ")
+            if self.outcome == False:
+                timeLabelA = QLabel("You Failed")
+                timeLabelB = QLabel("====== WOMP WOMP ======")
+            else: 
+                timeLabelA = QLabel("You Passed")
+                timeLabelB = QLabel("====== CHAMPION ======")
+        else:
+            timeLabelA = QLabel(f"You finished the test in")
+            timeLabelB = QLabel(f"{int(self.timeElapsed / 60)} minutes and {round(self.timeElapsed % 60, 1)} seconds") 
+            
+            timeLabelA.setStyleSheet("background: transparent; font-size: 20px;")
+            timeLabelB.setStyleSheet("background: transparent; font-size: 20px;")
 
-        timeLabelA = QLabel(f"You finished the test in")
-        timeLabelB = QLabel(f"{int(self.timeElapsed / 60)} minutes and {round(self.timeElapsed % 60, 1)} seconds") 
+            scoreLabel = QLabel("You got " + str(self.wordAmount - self.wrongWords) + " / " + str(self.wordAmount) + " words right!")
 
-        timeLabelA.setStyleSheet("background: transparent; font-size: 20px;")
-        timeLabelB.setStyleSheet("background: transparent; font-size: 20px;")
-
-        scoreLabel = QLabel("You got " + str(self.wordAmount - self.wrongWords) + " / " + str(self.wordAmount) + " words right!")
         scoreLabel.setStyleSheet("background: transparent; font-size: 26px;")
-
         self.suggestionLabel = QLabel("Words to revise:")
         self.suggestionLabel.setStyleSheet("background: transparent;")
         self.wordsExist()

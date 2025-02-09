@@ -28,10 +28,11 @@ class CustomLineEdit(QLineEdit):
 
 
 class StartWindow(QWidget):
-    def __init__(self, mainWindow, modeWindow, wordAmount, category):
+    def __init__(self, mainWindow, modeWindow, wordAmount, category, mode):
         super().__init__()
         self.modeWindow = modeWindow
         self.mainWindow = mainWindow
+        self.mode = mode
         self.wordsDict = {}
         self.wrongWordsDict = {}
         self.wrongWord = 0
@@ -74,9 +75,8 @@ class StartWindow(QWidget):
         self.submitButton.setStyleSheet("font-size: 20px; ")
         self.submitButton.blockSignals(True)
 
-        # stopwatch
+        # stopwatch / timer
         self.stopWatch = QTimer(self)
-        self.stopWatch.timeout.connect(self.updateTime)
 
         self.time = QLabel("Starting in 5...", self)
         self.time.setStyleSheet("font-size: 16px;")
@@ -119,7 +119,7 @@ class StartWindow(QWidget):
             else:
                 # close current page and open result page
                 elapsedSeconds = QTime(0, 0, 0).secsTo(self.elapsedTime)
-                self.resultWindow = ResultWindow(self.mainWindow, self.modeWindow, self.wrongWord, elapsedSeconds, self.wrongWordsDict, self.wordAmount) 
+                self.resultWindow = ResultWindow(self.mainWindow, self.modeWindow, self.wrongWord, elapsedSeconds, self.wrongWordsDict, self.wordAmount, self.mode, True) 
                 self.resultWindow.show()
                 self.close()
         
@@ -137,39 +137,62 @@ class StartWindow(QWidget):
             self.once = True
             self.updateWord() 
             self.wordField.clear() 
-            self.wordField.setStyleSheet("background-color: rgba(249, 205, 106, 0.5);")
+            self.wordField.setStyleSheet("background-color: rgba(194, 237, 206, 0.5);")
         else:
             self.wrongWordsDict[self.currentWord] = self.currentDefinition
             self.wordField.clear()
             if self.once:
                 self.wrongWord += 1
                 self.once = False
-            self.wordField.setStyleSheet("background-color: rgba(194, 237, 206, 0.5);")
+            self.wordField.setStyleSheet("background-color: rgba(255, 51, 51, 0.5);")
 
 
     def updateCountdown(self):
-        self.countdownTime -= 1
-        if self.countdownTime > 0:
-            self.time.setText(f"Starting in {self.countdownTime}...")
-        else:
-            self.countdownTimer.stop()
-            self.countdownFinished = True
+        if not self.countdownFinished:
+            # countdownTime counts down from 5 to 0.
+            if self.countdownTime > 0:
+                self.time.setText(f"Starting in {self.countdownTime}...")
+                self.countdownTime -= 1
+            else:
+                # INITIAL countdown finished.
+                self.countdownFinished = True
+                if self.mode == "HARD":
+                    # Set game duration.
+                    self.elapsedTime = QTime(0, 2, 0)
+                    self.time.setText(self.elapsedTime.toString("hh:mm:ss")) 
+                    self.time.setStyleSheet("font-size: 24px;")
+
+        elif self.mode == "HARD":
+            # Game timer phase 
+            if self.elapsedTime == QTime(0, 0, 0):
+                self.time.setText("00:00:00")
+                self.countdownTimer.stop()
+
+                message = "FAIL"
+                self.resultWindow = ResultWindow(self.mainWindow, self.modeWindow, self.wrongWord, message, self.wrongWordsDict, self.wordAmount, self.mode, False)
+                self.resultWindow.show()
+                self.close()
+
+            else: 
+                self.elapsedTime = self.elapsedTime.addSecs(-1)
+                self.time.setText(self.elapsedTime.toString("hh:mm:ss"))
 
 
     def startStopWatch(self):
-        self.stopWatch = QTimer(self)
-        self.stopWatch.timeout.connect(self.updateTime)
-        self.stopWatch.start(1000)
-        self.time.setText("00:00:00")
+        if self.mode != "HARD":
+            self.stopWatch = QTimer(self)
+            self.stopWatch.timeout.connect(self.updateTimeStopwatch)
+            self.stopWatch.start(1000)
+            self.time.setText("00:00:00")
 
-        self.time.setStyleSheet("font-size: 24px;")
-        self.submitButton.blockSignals(False)
+            self.time.setStyleSheet("font-size: 24px;")
+            self.submitButton.blockSignals(False)
 
     
-    def updateTime(self):
+    def updateTimeStopwatch(self):
         self.elapsedTime = self.elapsedTime.addSecs(1)
         self.time.setText(self.elapsedTime.toString("hh:mm:ss"))
-        
+
 
     def stopStopWatch(self):
         self.stopWatch.stop()
@@ -179,7 +202,6 @@ class StartWindow(QWidget):
         if self.modeWindow:
             self.modeWindow.show()
         self.close()
-        pass
 
 
 if __name__ == "__main__":
