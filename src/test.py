@@ -1,4 +1,7 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QScrollArea, QFrame, QHBoxLayout
+from PyQt6.QtWidgets import (
+    QApplication, QWidget, QVBoxLayout, QLabel, QScrollArea,
+    QFrame, QHBoxLayout, QPushButton, QGridLayout
+)
 from PyQt6.QtCore import Qt
 import sys
 
@@ -10,24 +13,34 @@ class WordDefinitionWidget(QFrame):
         self.initUI()
 
     def initUI(self):
-        layout = QHBoxLayout()
-        
-        # Word label
+        layout = QGridLayout()
+
         wordLabel = QLabel(f"<b>{self.word}</b>", self)
-        wordLabel.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        
-        # Definition label
+        wordLabel.setFixedSize(80, 80)
+
         definitionLabel = QLabel(self.definition, self)
         definitionLabel.setWordWrap(True)
-        definitionLabel.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        
-        # Adding word and definition to the layout
-        layout.addWidget(wordLabel)
-        layout.addWidget(definitionLabel)
+        definitionLabel.setFixedSize(180, 80)
+    
+        layout.addWidget(wordLabel, 0, 0, 1, 1)
+        layout.addWidget(definitionLabel, 0, 1, 1, 3)
 
         self.setLayout(layout)
 
-        self.setFixedSize(330, 80)
+        self.setStyleSheet(""" 
+            QLabel {
+                font-family: 'Arial', sans-serif;
+                color: #333333;
+            }
+            QLabel::selection {
+                background-color: #ffcc00;
+                color: white;
+            }
+            QFrame:hover {
+                background-color: #e6f7ff;
+            }
+        """)
+
 
 
 class ContentWindow(QWidget):
@@ -47,55 +60,24 @@ class ContentWindow(QWidget):
         # Create a container widget to hold all word-definition widgets
         containerWidget = QWidget()
         containerLayout = QVBoxLayout()
-        
+
         # Sample data: word and definition pairs
         results = [
-            ("Word 1", "This is the definition of word . the definition of word "),
-            ("Word 2", "This is the definition of word 2, which is quite long and may need scrolling."),
+            ("Word 1", "This is the definition of word 1."),
+            ("Word 2", "This is the definition of word 2, which is quite long."),
             ("Word 3", "This is the definition of word 3."),
             
             ("Word 1", "This is the definition of word 1."),
-            ("Word 2", "This is the definition of word 2, which is quite long and may need scrolling."),
-            ("Word 3", "This is the definition of word 3. the definition of word "),
-            
-            ("Word 1", "This is the definition of word 1."),
-            ("Word 2", "This is the definition of word 2, which is quite long and may need scrolling."),
+            ("Word 2", "This is the definition of word 2, which is quite long."),
             ("Word 3", "This is the definition of word 3."),
             
             ("Word 1", "This is the definition of word 1."),
-            ("Word 2", "This is the definition of word 2, which is quite long and may need scrolling."),
+            ("Word 2", "This is the definition of word 2, which is quite long."),
             ("Word 3", "This is the definition of word 3."),
             
             ("Word 1", "This is the definition of word 1."),
-            ("Word 2", "This is the definition of word 2, which is quite long and may need scrolling."),
+            ("Word 2", "This is the definition of word 2, which is quite long."),
             ("Word 3", "This is the definition of word 3."),
-            
-            ("Word 1", "This is the definition of word 1."),
-            ("Word 2", "This is the definition of word 2, which is quite long and may need scrolling."),
-            ("Word 3", "This is the definition of word 3."),
-            
-            ("Word 1", "This is the definition of word 1."),
-            ("Word 2", "This is the definition of word 2, which is quite long and may need scrolling."),
-            ("Word 3", "This is the definition of word 3."),
-
-            
-            ("Word 1", "This is the definition of word 1."),
-            ("Word 2", "This is the definition of word 2, which is quite long and may need scrolling."),
-            ("Word 3", "This is the definition of word 3."),
-            
-            ("Word 1", "This is the definition of word 1."),
-            ("Word 2", "This is the definition of word 2, which is quite long and may need scrolling."),
-            ("Word 3", "This is the definition of word 3."),
-            
-            ("Word 1", "This is the definition of word 1."),
-            ("Word 2", "This is the definition of word 2, which is quite long and may need scrolling."),
-            ("Word 3", "This is the definition of word 3."),
-            
-            ("Word 1", "This is the definition of word 1."),
-            ("Word 2", "This is the definition of word 2, which is quite long and may need scrolling."),
-            ("Word 3", "This is the definition of word 3."),
-
-
         ]
 
         # Add each word-definition pair to the container
@@ -103,11 +85,9 @@ class ContentWindow(QWidget):
             wordDefWidget = WordDefinitionWidget(word, definition)
             containerLayout.addWidget(wordDefWidget)
 
-        # Set the layout of the container and the scroll area
         containerWidget.setLayout(containerLayout)
         scrollArea.setWidget(containerWidget)
 
-        # Add scroll area to the main layout
         layout.addWidget(scrollArea)
         self.setLayout(layout)
 
