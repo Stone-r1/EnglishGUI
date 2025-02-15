@@ -78,17 +78,6 @@ styleSheet = """
         font-weight: 600;
     }
 
-    QComboBox::item {
-        border: none;
-        height: 45px;
-        padding: 5px;
-    }
-
-    QComboBox:focus {
-        border: 2px solid #6FB3B8;
-        background-color: rgba(194, 237, 206, 0.7);
-    }
-
     QComboBox::drop-down {
         subcontrol-origin: padding;
         subcontrol-position: top right;
@@ -96,6 +85,10 @@ styleSheet = """
         border-left: 1px solid #B9F8FF;
         border-top-right-radius: 10px;
         border-bottom-right-radius: 10px;
+        background-color: rgba(194, 237, 206, 0.5);
+    }
+
+    QComboBox:on { 
         background-color: rgba(194, 237, 206, 0.5);
     }
 

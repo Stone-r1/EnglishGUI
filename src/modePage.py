@@ -59,6 +59,7 @@ class ModeWindow(QWidget):
         self.returnButton.clicked.connect(self.returnToMainWindow)
 
         categoryLabel = QLabel("Category")
+
         self.categoryComboBox = QComboBox()
         self.categoryComboBox.setFixedWidth(250)
         self.categoryComboBox.addItem("ALL")
