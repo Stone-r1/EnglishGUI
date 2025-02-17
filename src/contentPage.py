@@ -38,32 +38,34 @@ class WordDefinitionWidget(QFrame):
     def initUI(self):
         layout = QVBoxLayout()
 
+        blurOverlay = QWidget(self)
+        blurOverlay.setGeometry(0, 0, 340, 165)
+        blurOverlay.setStyleSheet("background-color: rgba(194, 237, 206, 0.5);")
+        
+        blur_effect = QGraphicsBlurEffect()
+        blur_effect.setBlurRadius(30)
+        blurOverlay.setGraphicsEffect(blur_effect)
+
         wordLabel = QLabel(f"<b>{self.word}</b>", self)
-        wordLabel.setFixedSize(320, 40)
+        wordLabel.setFixedSize(320, 45) 
+        wordLabel.setStyleSheet("border: none; color: #253B56; font-size: 35px;")
 
         definitionLabel = QLabel(self.definition, self)
         definitionLabel.setWordWrap(True)
         definitionLabel.setFixedSize(320, 120)
-        definitionLabel.setStyleSheet("font-size: 20px;")
+        definitionLabel.setStyleSheet("font-size: 20px; border: none; color: #253B56;")
         definitionLabel.setAlignment(Qt.AlignmentFlag.AlignTop)
     
         layout.addWidget(wordLabel)
         layout.addWidget(definitionLabel)
         layout.setSpacing(5)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setObjectName("Layout")
+        layout.setContentsMargins(10, 0, 0, 0)
 
         self.setLayout(layout)
-        self.setFixedSize(330, 160)
+        self.setFixedSize(340, 165)
 
-        self.setStyleSheet(""" 
-            #Layout {
-                border: 5px solid black;
-                border-radius: 5px;
-            } 
-        """)
+        self.setStyleSheet("border-radius: 10px; border: 2px solid #253B56;") 
 
-  
 
 class CustomLineEdit(QLineEdit):
     def __init__(self, checkValidity = None, parent = None): 
@@ -107,9 +109,9 @@ class ContentWindow(QWidget):
 
         self.wordInput = CustomLineEdit(checkValidity = self.checkValidity, parent = self)
         self.wordInput.setPlaceholderText("Type a Word...")
-
-        self.wordCompleter = QCompleter(self)
-        self.wordInput.setCompleter(self.wordCompleter)
+        self.wordInput.setStyleSheet("font-size: 20px;")
+        self.wordInput.setFixedSize(180, 50)
+        self.wordInput.textChanged.connect(self.onWordInputChanged)
 
         wordContainerWidget = QWidget()
         self.wordContainerLayout = QVBoxLayout()
@@ -136,17 +138,7 @@ class ContentWindow(QWidget):
         for i in self.categoryList:
             self.categoryInput.addItem(i)
 
-        self.categoryInput.setCurrentIndex(0)
-
-    
-    def checkValidity(self): 
-        category = self.wordInput.text()
-
-        # temporary
-        if category in self.categoryList:
-            self.wordInput.setStyleSheet("background-color: green;")
-        else:
-            self.wordInput.setStyleSheet("background-color: red;") 
+        self.categoryInput.setCurrentIndex(0) 
 
 
     def onCategorySelected(self, index):
@@ -161,11 +153,62 @@ class ContentWindow(QWidget):
             if widget is not None:
                 widget.deleteLater()
 
-        # for later use
+        for word, definition in self.results.items():
+            wordDefWidget = WordDefinitionWidget(word, definition)
+            self.wordContainerLayout.addWidget(wordDefWidget)
+        
+        # add words to completer only after getting words from particular category
+        self.wordCompleter = QCompleter(self)
+        wordListModel = QStringListModel(list(self.results.keys()))
+        self.wordCompleter.setModel(wordListModel)
+        self.wordInput.setCompleter(self.wordCompleter)
+
+        self.wordCompleter.activated.connect(self.onWordSelected)
+
+
+    def onWordSelected(self, selectedWord):
+        self.wordInput.setText(selectedWord)
+        self.modifyWindowWords()
+
+
+    def onWordInputChanged(self):
+        text = self.wordInput.text().strip()
+
+        if not text:
+            self.restoreWords()
+            return
+
+        self.modifyWindowWords()
+
+
+    def restoreWords(self):
+        # restore all words when input is cleared
+        for i in reversed(range(self.wordContainerLayout.count())): 
+            widget = self.wordContainerLayout.itemAt(i).widget()
+            if widget is not None:
+                widget.deleteLater()
+
         for word, definition in self.results.items():
             wordDefWidget = WordDefinitionWidget(word, definition)
             self.wordContainerLayout.addWidget(wordDefWidget)
 
+
+    def modifyWindowWords(self): 
+        selectedWord = self.wordInput.text().strip()
+        matchingWords = {word: definition for word, definition in self.results.items() if selectedWord in word}
+        
+        for i in reversed(range(self.wordContainerLayout.count())):
+            widget = self.wordContainerLayout.itemAt(i).widget()
+            if widget is not None:
+                widget.deleteLater()
+
+        for word, definition in matchingWords.items():
+            wordDefWidget = WordDefinitionWidget(word, definition)
+            self.wordContainerLayout.addWidget(wordDefWidget)
+
+
+    def checkValidity(self): 
+        self.onWordInputChanged()
 
 
 if __name__ == "__main__":
@@ -173,4 +216,3 @@ if __name__ == "__main__":
     window = ContentWindow()
     window.show()
     sys.exit(app.exec())
-

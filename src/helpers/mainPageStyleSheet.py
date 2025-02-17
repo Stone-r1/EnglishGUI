@@ -92,8 +92,12 @@ styleSheet = """
         background-color: rgba(194, 237, 206, 0.5);
     }
 
-    QComboBox QAbstractItemView {
-        background-color: rgba(194, 237, 206, 0.9);
+    QAbstractItemView {
+        background-color: rgba(194, 237, 206, 0.7);
+    }
+
+    QAbstractItemView::item:selected {
+        background-color: rgba(63, 171, 148, 0.8);
     }
 """
 
