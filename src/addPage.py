@@ -11,6 +11,8 @@ import sys
 import subprocess
 
 
+# TODO : Add completer to category field.
+
 class CustomLineEdit(QLineEdit):
     def __init__(self, nextAction = None, parent = None, function = False):
         super().__init__(parent)

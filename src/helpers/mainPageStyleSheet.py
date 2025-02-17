@@ -1,7 +1,7 @@
 styleSheet = """
     
     * {
-        background-color: #388087;  
+        background-color: transparent;  
         font-family: "Comic Sans MS", "Baloo", "Fredoka One", sans-serif;
         color: #36557B;
         font-size: 25px;
@@ -92,5 +92,8 @@ styleSheet = """
         background-color: rgba(194, 237, 206, 0.5);
     }
 
+    QComboBox QAbstractItemView {
+        background-color: rgba(194, 237, 206, 0.9);
+    }
 """
 

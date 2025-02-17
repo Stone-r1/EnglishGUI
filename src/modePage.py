@@ -13,6 +13,7 @@ from helpers.backgroundCanvas import BackgroundCanvas
 from helpers.mainPageStyleSheet import styleSheet
 from startPage import StartWindow
 
+# TODO : change combobox to custom one.
 
 class CustomLineEdit(QLineEdit):
     def __init__(self, checkValidity = None, parent = None): 

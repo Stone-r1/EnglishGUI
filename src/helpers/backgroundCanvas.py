@@ -1,6 +1,6 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
+from PyQt6.QtWidgets import QApplication, QWidget, QGraphicsBlurEffect
 from PyQt6.QtCore import Qt, QPointF
-from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient
+from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient, QPixmap
 import sys
 
 
@@ -8,7 +8,6 @@ class BackgroundCanvas(QWidget):
     def __init__(self):
         super().__init__()
         self.UI()
-
 
     def UI(self):
         self.setFixedSize(400, 450)
@@ -38,14 +37,16 @@ class BackgroundCanvas(QWidget):
         painter.setBrush(brush)
         painter.drawEllipse(self.width() - 700, self.height() - 350, 500, 500)
 
+        # small circle
         radialGradient = QRadialGradient(QPointF(self.width() - 30, 30), 100)
         radialGradient.setColorAt(0, QColor("#EBF7FA")) 
         radialGradient.setColorAt(1, QColor("#B9F8FF")) 
 
         brush = QBrush(radialGradient)
         painter.setBrush(brush)
-
         painter.drawEllipse(self.width() - 100, 30, 80, 80)
+
+        painter.end()
 
 
 if __name__ == "__main__":
@@ -53,3 +54,4 @@ if __name__ == "__main__":
     canvas = BackgroundCanvas()
     canvas.show()
     sys.exit(app.exec())
+

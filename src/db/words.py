@@ -172,6 +172,19 @@ def countWords(db, category):
     print(json.dumps(total))
 
 
+def getWords(db, category): 
+    max = db.countCategoryWords(category)
+    wordsDict = {}
+
+    for i in range(max):
+        result = db.getCategoryWords(i, category)
+        if result:
+            wordsDict[result[0]] = result[1]
+
+    print(json.dumps(wordsDict))
+
+
+
 if __name__ == "__main__":
     word = sys.argv[1]
     definition = sys.argv[2]
@@ -189,6 +202,8 @@ if __name__ == "__main__":
         getCategories(db)
     elif mode == "COUNT":
         countWords(db, category)
+    elif mode == "GETWORDS":
+        getWords(db, category)
 
 
     db.close()
