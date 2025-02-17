@@ -1,17 +1,16 @@
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout,
-    QTextEdit, QSizePolicy
+    QTextEdit, QSizePolicy, QCompleter
 )
-from PyQt6.QtCore import Qt, QPointF
+from PyQt6.QtCore import Qt, QPointF, QStringListModel
 from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient, QKeyEvent
 
 from helpers.backgroundCanvas import BackgroundCanvas
 
 import sys
 import subprocess
+import json
 
-
-# TODO : Add completer to category field.
 
 class CustomLineEdit(QLineEdit):
     def __init__(self, nextAction = None, parent = None, function = False):
@@ -54,6 +53,7 @@ class AddWindow(QWidget):
     def __init__(self, mainWindow=None):
         super().__init__() 
         self.mainWindow = mainWindow
+        self.categories = []
         self.UI() 
 
 
@@ -76,8 +76,11 @@ class AddWindow(QWidget):
         info.setStyleSheet("font-size: 11px;")
 
         self.categoryInput = CustomLineEdit(nextAction = self.gatherInfo, parent = self, function = True)
-        self.categoryInput.setPlaceholderText("Enter Category...")
+        self.categoryInput.setPlaceholderText("ALL - default category")
+        self.categoryInput.setStyleSheet("font-size: 20px;")
+
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+        self.getCategories()
 
         definitionLabel = QLabel("Definition")
         self.definitionInput = CustomTextEdit(nextWidget = self.categoryInput, parent = self)
@@ -122,11 +125,30 @@ class AddWindow(QWidget):
         word = self.wordInput.text()
         category = self.categoryInput.text()
         definition = self.definitionInput.toPlainText()
+
+        if not category:
+            category = "ALL"
+            self.categoryInput.setText("ALL")
+
         subprocess.run([sys.executable, "db/words.py", word, definition, category, "1", "ADD"]) # placeholder 1
 
         self.wordInput.clear()
         self.definitionInput.clear()
         self.wordInput.setFocus()
+
+
+    def getCategories(self): 
+        temp = subprocess.run([sys.executable, "db/words.py", "1", "2", "3", "4", "GET"], capture_output = True, text = True)
+        self.categories = json.loads(temp.stdout)
+
+        if "ALL" not in self.categories:
+            self.categories.append("ALL")
+
+        categoryCompleter = QCompleter(self)
+        categoryListModel = QStringListModel(self.categories)
+        categoryCompleter.setModel(categoryListModel)
+        self.categoryInput.setCompleter(categoryCompleter)
+
 
 
 if __name__ == "__main__":   

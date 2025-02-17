@@ -132,7 +132,8 @@ class ContentWindow(QWidget):
 
     def getCategories(self): 
         c = subprocess.run([sys.executable, "db/words.py", "1", "2", "3", "4", "GET"], capture_output=True, text=True)
-        self.categoryList.append("ALL")
+        if "ALL" not in json.loads(c.stdout):
+            self.categoryList.append("ALL")
         self.categoryList += json.loads(c.stdout)
 
         for i in self.categoryList:

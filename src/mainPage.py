@@ -11,6 +11,7 @@ import sys
 from helpers.backgroundCanvas import BackgroundCanvas
 from helpers.mainPageStyleSheet import styleSheet
 
+
 class Window(QWidget):
     def __init__(self):
         super().__init__()
@@ -86,4 +87,3 @@ if __name__ == "__main__":
     window = Window()
     window.show()
     sys.exit(app.exec())
-

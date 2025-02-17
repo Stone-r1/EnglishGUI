@@ -13,7 +13,6 @@ from helpers.backgroundCanvas import BackgroundCanvas
 from helpers.mainPageStyleSheet import styleSheet
 from startPage import StartWindow
 
-# TODO : change combobox to custom one.
 
 class CustomLineEdit(QLineEdit):
     def __init__(self, checkValidity = None, parent = None): 
@@ -63,7 +62,6 @@ class ModeWindow(QWidget):
 
         self.categoryComboBox = QComboBox()
         self.categoryComboBox.setFixedWidth(250)
-        self.categoryComboBox.addItem("ALL")
 
         wordAmountLabel = QLabel(" MAX 20")
         self.wordAmount = CustomLineEdit(checkValidity = self.checkValidity, parent = self)
@@ -122,9 +120,13 @@ class ModeWindow(QWidget):
             print("Subprocess error:", result.stderr)
 
         self.categoryList = json.loads(result.stdout)
+        
+        if "ALL" not in self.categoryList:
+            self.categoryComboBox.addItem("ALL")
+
         for i in self.categoryList:
             maxForCategory = subprocess.run([sys.executable, "db/words.py", "1", "2", i, "4", "COUNT"], capture_output=True, text=True)
-            self.maxWords = json.loads(maxForCategory.stdout)
+            self.maxWords = json.loads(maxForCategory.stdout) 
             self.categoryComboBox.addItem(i + "  ==  " + str(self.maxWords))
 
 
