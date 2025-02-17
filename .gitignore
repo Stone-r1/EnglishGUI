@@ -5,3 +5,5 @@
 venv/
 
 /src/db/data/
+
+/src/test.py
