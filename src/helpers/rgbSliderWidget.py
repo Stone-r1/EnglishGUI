@@ -2,7 +2,6 @@ from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QSlider, QLineEdit, Q
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QImage, QColor, qRgb, QFont, QPixmap, QKeyEvent
 
-from RGBSliderStyleSheet import RgbSliderStyleSheet
 import sys
 
 
@@ -24,24 +23,23 @@ class CustomLineEdit(QLineEdit):
 
 
 class RGBSlider(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent = None):
+        super().__init__(parent)
         self.UI()
 
 
     def UI(self):
-        self.setFixedSize(225, 350)
+        self.setFixedSize(200, 430)
         self.setWindowTitle("RGB Slider")
 
         self.currentVal = QColor()
         self.colorDisplay = QImage(100, 100, QImage.Format.Format_ARGB32)
         self.colorDisplay.fill(Qt.GlobalColor.black)
 
-        # don't get why for now
+        # for the future: add comparison between default color and user's color
         self.cdLabel = QLabel()
         self.cdLabel.setPixmap(QPixmap.fromImage(self.colorDisplay))
         self.cdLabel.setScaledContents(True)
-
 
         # ============ red ==================
         redLabel = QLabel("Red")

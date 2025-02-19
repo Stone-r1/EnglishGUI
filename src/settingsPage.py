@@ -6,6 +6,9 @@ import sys
 
 from startPage import StartWindow
 from helpers.backgroundCanvas import BackgroundCanvas
+from helpers.rgbSliderWidget import RGBSlider
+from helpers.RGBSliderStyleSheet import RgbSliderStyleSheet
+from helpers.moonButtonWidget import GradientButton
 
 
 class SettingsWindow(QWidget):
@@ -21,8 +24,24 @@ class SettingsWindow(QWidget):
 
         self.background = BackgroundCanvas()
         self.background.setParent(self)
-        self.background.lower() 
+        self.background.lower()
 
+        self.sliderWidget = RGBSlider(self)
+        self.sliderWidget.setGeometry(0, 0, 225, 300)
+        self.sliderWidget.setStyleSheet(RgbSliderStyleSheet)
+        self.sliderWidget.raise_()
+
+        settingsButton = GradientButton("+", self.background, self)
+        settingsButton.setObjectName("SettingsButton")
+        settingsButton.clicked.connect(self.openMainWindow)
+        settingsButton.setGeometry(self.width() - 100, 30, 80, 80)
+        settingsButton.raise_()
+
+
+    def openMainWindow(self):
+        if self.mainWindow:
+            self.mainWindow.show()
+        self.close()
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ import sys
 
 from helpers.backgroundCanvas import BackgroundCanvas
 from helpers.mainPageStyleSheet import styleSheet
+from helpers.moonButtonWidget import GradientButton
 
 
 class Window(QWidget):
@@ -50,8 +51,8 @@ class Window(QWidget):
         contentButton.setObjectName("AddButton")
         contentButton.clicked.connect(self.openContentWindow)
 
-        settingsButton = QPushButton("S", self)
-        settingsButton.setStyleSheet("border-radius: 40px;")
+        settingsButton = GradientButton("+", self.background, self)
+        settingsButton.setObjectName("SettingsButton")
         settingsButton.clicked.connect(self.openSettingsWindow)
         settingsButton.setGeometry(self.width() - 100, 30, 80, 80)
 

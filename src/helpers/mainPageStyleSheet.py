@@ -64,6 +64,17 @@ styleSheet = """
                                     stop:0 #4BA3A3, stop:1 #5FAEAE);
     }
 
+    #SettingsButton {     
+        border-radius: 40px;
+        background: transparent;
+        border: none; 
+        font-size: 50px;
+    }
+
+    #SettingsButton:hover {
+        border: 7px solid rgba(255, 255, 255, 60);
+    }
+
     QPushButton:pressed {
         background: qlineargradient(spread:pad, x1:0, y1:1, x2:1, y2:0, 
                                     stop:0 #3D8C8D, stop:1 #6FB3B8);

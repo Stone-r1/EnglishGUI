@@ -1,8 +1,13 @@
 RgbSliderStyleSheet = """
 
+    * {
+        background-color: transparent;
+        font-size: 15px;
+    }
+
     QSlider::groove:horizontal {
         border: 1px solid #000000;
-        background: white;
+        background: transparent;
         height: 15px;
         border-radius: 5px;
     }
@@ -55,9 +60,5 @@ RgbSliderStyleSheet = """
         border: 1px solid #4C4B4B;
         height: 10px;
         border-radius: 4px;
-    }
-
-    QLineEdit {
-        font-size: 16px;
     }
 """
