@@ -209,4 +209,3 @@ if __name__ == "__main__":
     window = StartWindow()
     window.show()
     sys.exit(app.exec())
-

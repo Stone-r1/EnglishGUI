@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QGraphicsBlurEffect
+from PyQt6.QtWidgets import QApplication, QWidget, QGraphicsBlurEffect, QPushButton
 from PyQt6.QtCore import Qt, QPointF
 from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient, QPixmap
 import sys

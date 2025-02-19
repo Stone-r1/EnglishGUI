@@ -1,10 +1,11 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
-from PyQt6.QtCore import Qt, QPointF
+from PyQt6.QtCore import Qt, QPointF, QSize
 from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient
 
 from addPage import AddWindow
 from modePage import ModeWindow
 from contentPage import ContentWindow
+from settingsPage import SettingsWindow
 
 import sys
 
@@ -25,9 +26,6 @@ class Window(QWidget):
         self.background = BackgroundCanvas()
         self.background.setParent(self)
         self.background.lower()
-
-        self.decorations1 = QColor(156, 187, 252)
-        self.decorations2 = QColor(156, 187, 252, 150)
 
         verticalLayout = QVBoxLayout()
         verticalLayout2 = QVBoxLayout()
@@ -52,6 +50,11 @@ class Window(QWidget):
         contentButton.setObjectName("AddButton")
         contentButton.clicked.connect(self.openContentWindow)
 
+        settingsButton = QPushButton("S", self)
+        settingsButton.setStyleSheet("border-radius: 40px;")
+        settingsButton.clicked.connect(self.openSettingsWindow)
+        settingsButton.setGeometry(self.width() - 100, 30, 80, 80)
+
         verticalLayout2.addWidget(startButton)
         verticalLayout2.setSpacing(10)
         verticalLayout2.addWidget(addButton)
@@ -61,6 +64,7 @@ class Window(QWidget):
 
         verticalLayout.addLayout(verticalLayout2)
         self.setLayout(verticalLayout)
+        settingsButton.raise_()
 
 
     def openAddWindow(self):
@@ -72,6 +76,12 @@ class Window(QWidget):
     def openModeWindow(self):
         self.modeWindow = ModeWindow(self)
         self.modeWindow.show()
+        self.close()
+
+
+    def openSettingsWindow(self):
+        self.settingsWindow = SettingsWindow(self)
+        self.settingsWindow.show()
         self.close()
 
 
