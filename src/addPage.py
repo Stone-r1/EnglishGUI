@@ -5,11 +5,13 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QPointF, QStringListModel
 from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient, QKeyEvent
 
-from helpers.backgroundCanvas import BackgroundCanvas
-
 import sys
 import subprocess
 import json
+
+from helpers.backgroundCanvas import BackgroundCanvas
+from helpers.mainPageStyleSheet import styleSheet
+from helpers.escapeFunction import EscapeHandler
 
 
 class CustomLineEdit(QLineEdit):
@@ -49,7 +51,7 @@ class CustomTextEdit(QTextEdit):
         super().keyPressEvent(event)
 
 
-class AddWindow(QWidget):
+class AddWindow(QWidget, EscapeHandler):
     def __init__(self, mainWindow=None):
         super().__init__() 
         self.mainWindow = mainWindow

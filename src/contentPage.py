@@ -1,9 +1,14 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QLineEdit, QCompleter, QComboBox, QStyledItemDelegate, QStyle, QFrame, QScrollArea, QGridLayout, QGraphicsBlurEffect
 from PyQt6.QtCore import Qt, QStringListModel
 from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient, QKeyEvent
-import sys, subprocess, json
+
+import sys
+import subprocess
+import json
 
 from helpers.backgroundCanvas import BackgroundCanvas
+from helpers.mainPageStyleSheet import styleSheet
+from helpers.escapeFunction import EscapeHandler
 
 
 class CustomComboBox(QComboBox):
@@ -84,8 +89,8 @@ class CustomLineEdit(QLineEdit):
         super().keyPressEvent(event)
 
 
-class ContentWindow(QWidget):
-    def __init__(self, mainWindow=None):
+class ContentWindow(QWidget, EscapeHandler):
+    def __init__(self, mainWindow = None):
         super().__init__()
         self.mainWindow = mainWindow
         self.categoryList = []
@@ -210,6 +215,12 @@ class ContentWindow(QWidget):
 
     def checkValidity(self): 
         self.onWordInputChanged()
+
+
+    def openMainWindow(self):
+        if self.mainWindow:
+            self.mainWindow.show()
+        self.close()
 
 
 if __name__ == "__main__":

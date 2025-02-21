@@ -9,9 +9,11 @@ from helpers.backgroundCanvas import BackgroundCanvas
 from helpers.rgbSliderWidget import RGBSlider
 from helpers.RGBSliderStyleSheet import RgbSliderStyleSheet
 from helpers.moonButtonWidget import GradientButton
+from helpers.escapeFunction import EscapeHandler
 
+# TODO : add categories for changeable colors and saving to userColors.json
 
-class SettingsWindow(QWidget):
+class SettingsWindow(QWidget, EscapeHandler):
     def __init__(self, mainWindow):
         super().__init__()
         self.mainWindow = mainWindow
@@ -49,5 +51,3 @@ if __name__ == "__main__":
     settingsWindow = SettingsWindow()
     settingsWindow.show()
     sys.exit(app.exec())
-
-

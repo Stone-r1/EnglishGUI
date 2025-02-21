@@ -11,6 +11,7 @@ import json
 
 from helpers.backgroundCanvas import BackgroundCanvas
 from helpers.mainPageStyleSheet import styleSheet
+from helpers.escapeFunction import EscapeHandler
 from startPage import StartWindow
 
 
@@ -31,7 +32,7 @@ class CustomLineEdit(QLineEdit):
         super().keyPressEvent(event)
 
 
-class ModeWindow(QWidget):
+class ModeWindow(QWidget, EscapeHandler):
     def __init__(self, mainWindow):
         super().__init__()
         self.mainWindow = mainWindow
@@ -56,7 +57,7 @@ class ModeWindow(QWidget):
         grid.setVerticalSpacing(3)
 
         self.returnButton = QPushButton("Return")
-        self.returnButton.clicked.connect(self.returnToMainWindow)
+        self.returnButton.clicked.connect(self.openMainWindow)
 
         categoryLabel = QLabel("Category")
 
@@ -108,7 +109,7 @@ class ModeWindow(QWidget):
         self.setLayout(grid)
 
 
-    def returnToMainWindow(self):
+    def openMainWindow(self):
         if self.mainWindow:
             self.mainWindow.show()
         self.close()

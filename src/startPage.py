@@ -2,12 +2,13 @@ from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdi
 from PyQt6.QtCore import Qt, QPointF, QTimer, QTime
 from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradient, QKeyEvent
 
-from helpers.backgroundCanvas import BackgroundCanvas
-from resultPage import ResultWindow
-
 import sys
 import subprocess
 import json
+
+from resultPage import ResultWindow
+from helpers.backgroundCanvas import BackgroundCanvas
+from helpers.mainPageStyleSheet import styleSheet
 
 
 class CustomLineEdit(QLineEdit):
