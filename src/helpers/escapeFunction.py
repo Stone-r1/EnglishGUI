@@ -8,5 +8,4 @@ class EscapeHandler:
             event.accept()
             self.openMainWindow()
         else:
-            super().keyPressEvent(event)
-
+            pass

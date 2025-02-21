@@ -29,7 +29,6 @@ class RGBSlider(QWidget):
 
 
     def UI(self):
-        self.setFixedSize(200, 430)
         self.setWindowTitle("RGB Slider")
 
         self.currentVal = QColor()
@@ -40,6 +39,8 @@ class RGBSlider(QWidget):
         self.cdLabel = QLabel()
         self.cdLabel.setPixmap(QPixmap.fromImage(self.colorDisplay))
         self.cdLabel.setScaledContents(True)
+        self.cdLabel.setStyleSheet("border: 2px solid black; border-radius: 5px;")
+        self.cdLabel.setFixedSize(200, 100)
 
         # ============ red ==================
         redLabel = QLabel("Red")
@@ -72,8 +73,10 @@ class RGBSlider(QWidget):
 
         self.rgbValueLineEdit = CustomLineEdit(self, self.checkValidity)
         self.rgbValueLineEdit.setPlaceholderText("Enter RGBA value")
+        self.rgbValueLineEdit.setFixedSize(205, 35)
 
         grid = QGridLayout()
+        grid.setContentsMargins(0, 0, 0, 0)
         grid.addWidget(redLabel, 0, 0, Qt.AlignmentFlag.AlignLeft)
         grid.addWidget(self.redSlider, 1, 0)
 
@@ -86,7 +89,6 @@ class RGBSlider(QWidget):
         grid.addWidget(alphaLabel, 6, 0, Qt.AlignmentFlag.AlignLeft)
         grid.addWidget(self.alphaSlider, 7, 0)
 
-        grid.addWidget(self.rgbValueLineEdit, 8, 0, Qt.AlignmentFlag.AlignCenter)
 
         self.redSlider.valueChanged.connect(self.checkValidity)
         self.greenSlider.valueChanged.connect(self.checkValidity)
@@ -100,7 +102,10 @@ class RGBSlider(QWidget):
         verticalLayout = QVBoxLayout()
         verticalLayout.addWidget(self.cdLabel)
         verticalLayout.addWidget(rgbWidget)
+        verticalLayout.setSpacing(10)
+        verticalLayout.addWidget(self.rgbValueLineEdit)
         self.setLayout(verticalLayout)
+
 
 
     def updateRedSlider(self, value):

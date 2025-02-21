@@ -29,7 +29,7 @@ class SettingsWindow(QWidget, EscapeHandler):
         self.background.lower()
 
         self.sliderWidget = RGBSlider(self)
-        self.sliderWidget.setGeometry(0, 0, 225, 300)
+        self.sliderWidget.setGeometry(0, 100, 220, 350)
         self.sliderWidget.setStyleSheet(RgbSliderStyleSheet)
         self.sliderWidget.raise_()
 
@@ -38,6 +38,10 @@ class SettingsWindow(QWidget, EscapeHandler):
         settingsButton.clicked.connect(self.openMainWindow)
         settingsButton.setGeometry(self.width() - 100, 30, 80, 80)
         settingsButton.raise_()
+
+        self.returnButton = QPushButton("Return", self)
+        self.returnButton.clicked.connect(self.openMainWindow)
+        self.returnButton.setGeometry(10, 10, 145, 50)
 
 
     def openMainWindow(self):
