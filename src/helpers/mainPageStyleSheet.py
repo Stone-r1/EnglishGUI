@@ -110,5 +110,13 @@ styleSheet = """
     QAbstractItemView::item:selected {
         background-color: rgba(63, 171, 148, 0.8);
     }
+
+    QListWidget::item {
+        height: 40px;
+    }
+
+    QListWidget {
+        background: transparent;
+    }
 """
 

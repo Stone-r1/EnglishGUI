@@ -212,6 +212,10 @@ class RGBSlider(QWidget):
         self.updateColorInfo(newColor)
 
 
+    def getCurrentRGB(self):
+        return self.rgbValueLineEdit.text()
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyleSheet(RgbSliderStyleSheet)
