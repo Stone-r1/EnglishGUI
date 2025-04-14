@@ -4,7 +4,6 @@ from PyQt6.QtGui import QPainter, QBrush, QColor, QLinearGradient, QRadialGradie
 import sys
 import json
 
-# TODO : maybe I'll have to add one more function that will open the window again after pressing one button on the main page
 
 class BackgroundCanvas(QWidget):
     def __init__(self):
