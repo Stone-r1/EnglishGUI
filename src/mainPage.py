@@ -92,10 +92,13 @@ class Window(QWidget):
         self.close()
 
 
-if __name__ == "__main__":
+def main():
     app = QApplication(sys.argv)
     app.setStyleSheet(styleSheet)
     window = Window()
     window.show()
     sys.exit(app.exec())
 
+
+if __name__ == "__main__":
+    main();
